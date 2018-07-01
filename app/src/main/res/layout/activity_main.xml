@@ -21,9 +21,9 @@
         android:id="@+id/navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="parent"
-        app:itemIconTint="@android:color/holo_blue_dark"
-        app:itemTextColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/conteiner_fragment"
+        app:itemIconTint="@color/color_item_state"
+        app:itemTextColor="@color/color_item_state"
         app:menu="@menu/test_menu"
         />
 

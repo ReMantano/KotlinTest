@@ -1,4 +1,6 @@
-package com.example.kotlintest
+package com.example.kotlintest.until
+
+import com.example.kotlintest.R
 
 enum class HomeScreens( val  ItemId : Int){
 
