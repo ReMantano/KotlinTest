@@ -1,11 +1,11 @@
 package com.example.kotlintest
 
-import android.support.v4.app.Fragment
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.design.widget.BottomNavigationView
+import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import com.example.kotlintest.fragments.EmptyFragment
 import com.example.kotlintest.fragments.ListFragment
@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         private const val EXTRA_SHOW_SCREEN = "screen"
 
     }
+
 
     private val FRAGMENT_TAG_FIRST = fragmentTag<ListFragment>()
     private val FRAGMENT_TAG_SECOND = fragmentTag<EmptyFragment>()

@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.example.kotlintest.until.ListModel
 import com.example.kotlintest.R
+import com.example.kotlintest.until.ListModel
 
 class ListModelViewHolder private constructor(root : View) : RecyclerView.ViewHolder(root){
 
@@ -23,7 +23,7 @@ class ListModelViewHolder private constructor(root : View) : RecyclerView.ViewHo
 
     init{
         nameView = root.findViewById(R.id.list_name)
-        ageView = root.findViewById(R.id.list_age)
+        ageView = root.findViewById(R.id.list_price)
     }
 
     fun bint(model: ListModel){
