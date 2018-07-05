@@ -14,7 +14,7 @@ import retrofit2.http.Query
 interface CoinMarketCapApi {
 
 
-    @GET("/ticker/")
+    @GET("ticker/")
     fun GetCoins(
             @Query("start") start: Int,
             @Query("limit") limit: Int): io.reactivex.Observable<List<Coin>>
@@ -26,7 +26,7 @@ interface CoinMarketCapApi {
             val retrofit = Retrofit.Builder()
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create(gson))
-                    .baseUrl("https://api.coinmarketcap.com/v1")
+                    .baseUrl("https://api.coinmarketcap.com/v1/")
                     .build()
             return retrofit.create(CoinMarketCapApi::class.java)
         }

@@ -8,6 +8,6 @@ import com.google.gson.annotations.SerializedName
 data class Coin(
         @SerializedName("name") val name: String,
         @SerializedName("symbol") val symbol: String,
-        @SerializedName("price_usd") val price: Int,
-        @SerializedName("percent_change_24h") val percent_24h: Int
+        @SerializedName("price_usd") val price: Double,
+        @SerializedName("percent_change_24h") val percent_24h: Double
 )

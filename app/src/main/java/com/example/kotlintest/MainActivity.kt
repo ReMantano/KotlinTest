@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
 
-    private val FRAGMENT_TAG_FIRST = fragmentTag<ListFragment>()
+    private val FRAGMENT_TAG_FIRST = fragmentTag<EmptyFragment>()
     private val FRAGMENT_TAG_SECOND = fragmentTag<EmptyFragment>()
     private val FRAGMENT_TAG_THIRD = fragmentTag<ListFragment>()
 

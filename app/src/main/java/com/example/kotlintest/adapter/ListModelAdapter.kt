@@ -1,6 +1,9 @@
 package com.example.kotlintest.adapter
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.Drawable
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +17,9 @@ class ListModelAdapter(val list: MutableList<Coin>, val context: Context) : Recy
 
 
     var data: MutableList<Coin> = list
-    //val colors: Array<Int>  = arrayOf(0xFF9C27B,0xFF99000,0xFF00990,0xFF00009)
+    val colors: Array<Int> = arrayOf(Color.argb(255, 0, 255, 0), Color.argb(255, 255, 255, 0),
+            Color.argb(255, 0, 255, 255), Color.argb(255, 100, 100, 0),
+            Color.argb(255, 0, 255, 100), Color.argb(255, 10, 255, 100))
     val rand: Random = Random()
 
 
@@ -29,17 +34,19 @@ class ListModelAdapter(val list: MutableList<Coin>, val context: Context) : Recy
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val model = data[position]
 
+        val symbol: Int = model.symbol[0].toInt() + model.symbol[1].toInt()
+
         holder.nameView.text = model.name
         holder.priceView.text = model.price.toString()
         holder.procentView.text = model.percent_24h.toString()
         holder.imageView.text = model.symbol
 
-        if (model.percent_24h < 0) holder.procentView.setTextColor(0xFFff000)
-        else holder.procentView.setTextColor(0xFF00ff0)
+        if (model.percent_24h < 0) holder.procentView.setTextColor(Color.argb(255, 255, 0, 0))
+        else holder.procentView.setTextColor(Color.argb(255, 0, 255, 0))
 
-        //var draw: Drawable = holder.imageView.background
-        //var wrap:Drawable = DrawableCompat.wrap(draw)
-        // DrawableCompat.setTint(wrap,colors[rand.nextInt(colors.size)])
+        var draw: Drawable = holder.imageView.background
+        var wrap: Drawable = DrawableCompat.wrap(draw)
+        DrawableCompat.setTint(wrap, colors[symbol % colors.size])
     }
 
     override fun getItemCount(): Int = data.size

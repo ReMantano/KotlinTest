@@ -36,7 +36,7 @@ class ListFragment : Fragment() {
         listView.layoutManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false)
 
         compositeDisposable.add(
-                getCoins.GetCoins(0)
+                getCoins.getCoins(0)
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeOn(Schedulers.io())
                         .subscribe({ result ->
