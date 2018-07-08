@@ -9,8 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.kotlintest.R
 import com.example.kotlintest.adapter.CoinAdapter
-import com.example.kotlintest.api.Coin
-import com.example.kotlintest.api.SearchCoins
+import com.example.kotlintest.api.CoinMarketCap.Coin
+import com.example.kotlintest.api.CoinMarketCap.SearchCoins
 import com.example.kotlintest.api.SearchCoinsProvider
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable

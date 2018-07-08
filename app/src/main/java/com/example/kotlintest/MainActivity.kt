@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import com.example.kotlintest.fragments.EmptyFragment
+import com.example.kotlintest.fragments.GraphFragment
 import com.example.kotlintest.fragments.ListFragment
 import com.example.kotlintest.until.HomeScreens
 import com.example.kotlintest.until.fragmentTag
@@ -25,9 +26,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
 
-    private val FRAGMENT_TAG_FIRST = fragmentTag<EmptyFragment>()
-    private val FRAGMENT_TAG_SECOND = fragmentTag<EmptyFragment>()
-    private val FRAGMENT_TAG_THIRD = fragmentTag<ListFragment>()
+    private val FRAGMENT_TAG_FIRST = fragmentTag<ListFragment>()
+    private val FRAGMENT_TAG_SECOND = fragmentTag<GraphFragment>()
+    private val FRAGMENT_TAG_THIRD = fragmentTag<EmptyFragment>()
 
     private var current: HomeScreens = HomeScreens.DEFAULT_SCREEN
 

@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.kotlintest.R
-import com.example.kotlintest.api.Coin
+import com.example.kotlintest.api.CoinMarketCap.Coin
 import kotlinx.android.synthetic.main.item_list.view.*
 import java.util.*
 

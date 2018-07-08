@@ -1,4 +1,4 @@
-package com.example.kotlintest.api
+package com.example.kotlintest.api.CoinMarketCap
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
