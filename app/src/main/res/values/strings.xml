@@ -3,4 +3,10 @@
     <string name="menu_title_first">First</string>
     <string name="menu_title_second">Second</string>
     <string name="menu_title_third">Third</string>
+    <string-array name="sortList">
+        <item>По убыванию цены</item>
+        <item>По возрастанию цены</item>
+        <item>По ежедневному росту</item>
+        <item>По ежедневному падению</item>
+    </string-array>
 </resources>

@@ -19,6 +19,7 @@ class CoinAdapter(val list: MutableList<Coin?>, val context: Context) : Recycler
     private val TYPE_PROGRESS = 0
 
     var data: MutableList<Coin?> = list
+
     val colors: Array<Int> = arrayOf(Color.argb(255, 0, 255, 0), Color.argb(255, 255, 255, 0),
             Color.argb(255, 0, 255, 255), Color.argb(255, 100, 100, 0),
             Color.argb(255, 0, 255, 100), Color.argb(255, 10, 255, 100))
