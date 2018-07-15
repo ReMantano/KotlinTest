@@ -1,6 +1,5 @@
 package com.example.kotlintest.adapter
 
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.support.v4.graphics.drawable.DrawableCompat
@@ -13,11 +12,11 @@ import com.example.kotlintest.api.CoinMarketCap.Coin
 import kotlinx.android.synthetic.main.item_list.view.*
 import java.util.*
 
-class CoinAdapter(val list: MutableList<Coin?>, val context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class CoinAdapter(list: MutableList<Coin?>, clickListener: View.OnClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val TYPE_TEXT = 1
     private val TYPE_PROGRESS = 0
-
+    val listen = clickListener
     var data: MutableList<Coin?> = list
 
     val colors: Array<Int> = arrayOf(Color.argb(255, 0, 255, 0), Color.argb(255, 255, 255, 0),
@@ -32,14 +31,14 @@ class CoinAdapter(val list: MutableList<Coin?>, val context: Context) : Recycler
         if (viewType == TYPE_TEXT) {
             val v: View = LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_list, parent, false)
+            v.setOnClickListener(listen)
             viewHolder = TextViewHolder(v)
         } else {
             val v: View = LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_progress_bar, parent, false)
             viewHolder = ProgressViewHolder(v)
         }
-        //val layoutInflater = LayoutInflater.from(parent.context)
-        ///val view = layoutInflater.inflate(R.layout.item_list, parent, false)
+
         return viewHolder
     }
 
@@ -64,8 +63,6 @@ class CoinAdapter(val list: MutableList<Coin?>, val context: Context) : Recycler
             var draw: Drawable = holder.imageView.background
             var wrap: Drawable = DrawableCompat.wrap(draw)
             DrawableCompat.setTint(wrap, colors[symbol % colors.size])
-        } else {
-            //(holder as ProgressViewHolder).progreccBar.visibility = ProgressBar.VISIBLE
         }
     }
 
@@ -83,9 +80,7 @@ class CoinAdapter(val list: MutableList<Coin?>, val context: Context) : Recycler
 
     }
 
-    class ProgressViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        //val progreccBar: ProgressBar = (view as ProgressBar).findViewById(R.id.progressBar)
-    }
+    class ProgressViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
 
 }

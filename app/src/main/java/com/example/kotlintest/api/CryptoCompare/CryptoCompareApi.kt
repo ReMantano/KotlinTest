@@ -11,7 +11,21 @@ import retrofit2.http.Query
 interface CryptoCompareApi {
 
     @GET("/data/histoday")
-    fun getHistory(
+    fun getHistoryDay(
+            @Query("fsym") nameCoin: String,
+            @Query("tsym") nameCur: String,
+            @Query("limit") limit: Int
+    ): io.reactivex.Observable<HistoryData>
+
+    @GET("/data/histohour")
+    fun getHistoryHour(
+            @Query("fsym") nameCoin: String,
+            @Query("tsym") nameCur: String,
+            @Query("limit") limit: Int
+    ): io.reactivex.Observable<HistoryData>
+
+    @GET("/data/histominute")
+    fun getHistoryMinute(
             @Query("fsym") nameCoin: String,
             @Query("tsym") nameCur: String,
             @Query("limit") limit: Int

@@ -4,33 +4,53 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.TextView
+import com.example.kotlintest.MainActivity
 import com.example.kotlintest.R
 import com.example.kotlintest.adapter.CoinAdapter
 import com.example.kotlintest.api.CoinMarketCap.Coin
 import com.example.kotlintest.api.CoinMarketCap.SearchCoins
 import com.example.kotlintest.api.SearchCoinsProvider
+import com.example.kotlintest.until.fragmentTag
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_list.*
 import java.util.*
-import kotlin.collections.ArrayList
 
 
-class ListFragment : Fragment() {
+class ListFragment : Fragment(), View.OnClickListener {
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     private val getCoins: SearchCoins = SearchCoinsProvider.providerSearchCoins()
     private lateinit var adapter: CoinAdapter
     private lateinit var llm: LinearLayoutManager
 
-    private val list: MutableList<Coin?> = mutableListOf()
+
     private var isLoading: Boolean = false
+
+
+    override fun onClick(p0: View?) {
+
+        MainActivity.EXTRA_COIN_NAME = p0?.findViewById<TextView>(R.id.list_name)?.text as String
+        MainActivity.EXTRA_COIN_SYMBOL = p0.findViewById<TextView>(R.id.list_image)?.text as String
+        MainActivity.EXTRA_COIN_PRICE = p0.findViewById<TextView>(R.id.list_price)?.text.toString().toDouble()
+
+
+        val transaction = activity.supportFragmentManager.beginTransaction()
+
+        val fragment = Fragment.instantiate(context, fragmentTag<GraphFragment>(), null)
+
+        transaction.setCustomAnimations(
+                android.R.anim.fade_in, android.R.anim.fade_out,
+                android.R.anim.fade_out, android.R.anim.fade_in)
+        transaction.replace(R.id.conteiner_fragment, fragment, fragmentTag<GraphFragment>())
+        transaction.commit()
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
             inflater.inflate(R.layout.fragment_list,container,false)
@@ -59,9 +79,11 @@ class ListFragment : Fragment() {
             }
         })
 
-        adapter = CoinAdapter(list, context)
+        adapter = CoinAdapter(list, this)
         listView.adapter = adapter
         loadCoin(0)
+        adapter.notifyDataSetChanged()
+
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -70,80 +92,13 @@ class ListFragment : Fragment() {
 
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 val item = p0?.getItemAtPosition(p2).toString()
-                Log.d("BOOBOBOBOBOBOB", item)
-                when (item) {
+                sortList(item)
 
-                    "По убыванию цены" -> {
-                        Log.d("BOOBOBOBOBOBOB", item)
-                        Collections.sort(list, object : Comparator<Coin?> {
-                            override fun compare(p0: Coin?, p1: Coin?): Int {
-
-                                if (p0 != null && p1 != null) {
-                                    return -p0.price.compareTo(p1.price)
-                                } else {
-                                    return 0
-                                }
-                            }
-                        })
-                        adapter.notifyDataSetChanged()
-                    }
-
-                    "По возрастанию цены" -> {
-                        Log.d("BOOBOBOBOBOBOB", item)
-                        Collections.sort(list, object : Comparator<Coin?> {
-                            override fun compare(p0: Coin?, p1: Coin?): Int {
-
-                                if (p0 != null && p1 != null) {
-                                    return p0.price.compareTo(p1.price)
-                                } else {
-                                    return 0
-                                }
-                            }
-                        })
-                        adapter.notifyDataSetChanged()
-
-                    }
-
-                    "По ежедневному росту" -> {
-                        Log.d("BOOBOBOBOBOBOB", item)
-                        Collections.sort(list, object : Comparator<Coin?> {
-                            override fun compare(p0: Coin?, p1: Coin?): Int {
-
-                                if (p0 != null && p1 != null) {
-                                    return -p0.percent_24h.compareTo(p1.percent_24h)
-                                } else {
-                                    return 0
-                                }
-                            }
-                        })
-                        adapter.notifyDataSetChanged()
-                    }
-
-                    "По ежедневному падению" -> {
-
-                        Collections.sort(list, object : Comparator<Coin?> {
-                            override fun compare(p0: Coin?, p1: Coin?): Int {
-
-                                if (p0 != null && p1 != null) {
-                                    return p0.percent_24h.compareTo(p1.percent_24h)
-                                } else {
-                                    return 0
-                                }
-                            }
-                        })
-                        adapter.notifyDataSetChanged()
-                    }
-
-                }
             }
         }
 
 
-
-        adapter.notifyDataSetChanged()
     }
-
-
 
 
     private fun loadCoin(last: Int) {
@@ -166,68 +121,74 @@ class ListFragment : Fragment() {
 
     }
 
-    private fun sortList(size: Int, listArray: ArrayList<Coin>): ArrayList<Coin> {
+    private fun sortList(sort: String) {
+        when (sort) {
 
-        if (size <= 1) return listArray
-        else {
+            "По убыванию цены" -> {
 
-            val midsize: Int = size / 2
+                Collections.sort(list, object : Comparator<Coin?> {
+                    override fun compare(p0: Coin?, p1: Coin?): Int {
 
-            var lArray: ArrayList<Coin> = ArrayList<Coin>()
-            var rArray: ArrayList<Coin> = ArrayList<Coin>()
-
-            if (midsize != 1) {
-                lArray.addAll(listArray.subList(0, midsize - 1))
-                if (midsize != 2) rArray.addAll(listArray.subList(midsize, size - 1))
-                else rArray.add(listArray.get(2))
-            } else {
-                lArray.add(listArray.get(0))
-                rArray.add(listArray.get(1))
+                        if (p0 != null && p1 != null) {
+                            return -p0.price.compareTo(p1.price)
+                        } else {
+                            return 0
+                        }
+                    }
+                })
+                adapter.notifyDataSetChanged()
             }
 
-            var lsize = lArray.size
-            var rsize = rArray.size
+            "По возрастанию цены" -> {
 
-            lArray = sortList(lsize, lArray)
-            rArray = sortList(rsize, rArray)
+                Collections.sort(list, object : Comparator<Coin?> {
+                    override fun compare(p0: Coin?, p1: Coin?): Int {
 
-            var l = 0
-            var r = 0
-
-            var array: ArrayList<Coin> = ArrayList<Coin>()
-
-
-            while (l < lsize && r < rsize) {
-
-                if (lArray.get(l).price < rArray.get(r).price) {
-
-                    array.add(lArray.get(l))
-                    l++
-
-                } else {
-                    array.add(rArray.get(r))
-                    r++
-                }
-            }
-            if (l == lsize) {
-
-                if (r != rsize) array.addAll(((rArray.subList(r, rsize - 1))))
-                else array.add(rArray.get(r))
-
-            } else {
-
-                if (l != lsize) array.addAll(((lArray.subList(l, lsize - 1))))
-                else array.add(lArray.get(l))
+                        if (p0 != null && p1 != null) {
+                            return p0.price.compareTo(p1.price)
+                        } else {
+                            return 0
+                        }
+                    }
+                })
+                adapter.notifyDataSetChanged()
 
             }
 
+            "По ежедневному росту" -> {
 
+                Collections.sort(list, object : Comparator<Coin?> {
+                    override fun compare(p0: Coin?, p1: Coin?): Int {
 
+                        if (p0 != null && p1 != null) {
+                            return -p0.percent_24h.compareTo(p1.percent_24h)
+                        } else {
+                            return 0
+                        }
+                    }
+                })
+                adapter.notifyDataSetChanged()
+            }
 
-            return array
+            "По ежедневному падению" -> {
+
+                Collections.sort(list, object : Comparator<Coin?> {
+                    override fun compare(p0: Coin?, p1: Coin?): Int {
+
+                        if (p0 != null && p1 != null) {
+                            return p0.percent_24h.compareTo(p1.percent_24h)
+                        } else {
+                            return 0
+                        }
+                    }
+                })
+                adapter.notifyDataSetChanged()
+            }
+
         }
     }
 
-
-
+    companion object {
+        val list: MutableList<Coin?> = mutableListOf()
+    }
 }

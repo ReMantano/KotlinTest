@@ -19,10 +19,10 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
 
     companion object {
-
-        private const val EXTRA_SCREEN_DATA = "data"
+        var EXTRA_COIN_SYMBOL = "BTC"
+        var EXTRA_COIN_NAME = "Bitcoin"
+        var EXTRA_COIN_PRICE = 6500.0
         private const val EXTRA_SHOW_SCREEN = "screen"
-
     }
 
 

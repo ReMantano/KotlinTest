@@ -4,6 +4,6 @@ import com.google.gson.annotations.SerializedName
 import com.jjoe64.graphview.series.DataPoint
 
 data class DataC(
-        @SerializedName("time") val time: Double,
-        @SerializedName("close") val close: Double
+        @SerializedName("time") var time: Double,
+        @SerializedName("close") var close: Double
 ) : DataPoint(time, close)
