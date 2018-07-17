@@ -7,53 +7,73 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
-import com.example.kotlintest.fragments.EmptyFragment
-import com.example.kotlintest.fragments.GraphFragment
-import com.example.kotlintest.fragments.ListFragment
+import android.view.View
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.ProgressBar
 import com.example.kotlintest.until.HomeScreens
-import com.example.kotlintest.until.fragmentTag
+import com.example.kotlintest.until.ShowNotConnectItems
+import com.example.kotlintest.until.StockRes
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener, ShowNotConnectItems {
 
+    lateinit var notConnectionBlock: LinearLayout
+    lateinit var notConnectionProgressBar: ProgressBar
+    lateinit var notConnectionButon: Button
 
+    override fun Show(load: Boolean) {
 
-    companion object {
-        var EXTRA_COIN_SYMBOL = "BTC"
-        var EXTRA_COIN_NAME = "Bitcoin"
-        var EXTRA_COIN_PRICE = 6500.0
-        private const val EXTRA_SHOW_SCREEN = "screen"
+        if (load) {
+            notConnectionBlock.visibility = View.INVISIBLE
+            notConnectionProgressBar.visibility = View.INVISIBLE
+        } else {
+            notConnectionBlock.visibility = View.VISIBLE
+            notConnectionProgressBar.visibility = View.INVISIBLE
+        }
     }
 
-
-    private val FRAGMENT_TAG_FIRST = fragmentTag<ListFragment>()
-    private val FRAGMENT_TAG_SECOND = fragmentTag<GraphFragment>()
-    private val FRAGMENT_TAG_THIRD = fragmentTag<EmptyFragment>()
-
-    private var current: HomeScreens = HomeScreens.DEFAULT_SCREEN
-
+    override fun restart() {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         if (savedInstanceState != null)
-            current = savedInstanceState.getSerializable(EXTRA_SHOW_SCREEN) as? HomeScreens ?: HomeScreens.DEFAULT_SCREEN
+            StockRes.current = savedInstanceState.getSerializable(StockRes.EXTRA_SHOW_SCREEN) as? HomeScreens ?: HomeScreens.DEFAULT_SCREEN
 
         navigation.setOnNavigationItemSelectedListener(this)
-        navigation.selectedItemId = current.ItemId
+        navigation.selectedItemId = StockRes.current.ItemId
+
+        notConnectionButon = findViewById<Button>(R.id.notConnectionButton)
+        notConnectionBlock = findViewById<LinearLayout>(R.id.notConnectionBlock)
+        notConnectionProgressBar = findViewById<ProgressBar>(R.id.notConnectionProgressBar)
+
+        notConnectionButon.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+                notConnectionProgressBar.visibility = View.VISIBLE
+                notConnectionBlock.visibility = View.INVISIBLE
+                var th: Thread = Thread(object : Runnable {
+                    override fun run() {
+                        selectScreen(HomeScreens.FIRST)
+                    }
+                })
+                th.run()
+
+            }
+        })
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
 
-        current = intent.getBundleExtra(EXTRA_SHOW_SCREEN) as? HomeScreens ?: HomeScreens.DEFAULT_SCREEN
-        selectScreen(current)
+        StockRes.current = intent.getBundleExtra(StockRes.EXTRA_SHOW_SCREEN) as? HomeScreens ?: HomeScreens.DEFAULT_SCREEN
+        selectScreen(StockRes.current)
     }
 
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle?) {
-        outState.putSerializable(EXTRA_SHOW_SCREEN,current)
+        outState.putSerializable(StockRes.EXTRA_SHOW_SCREEN, StockRes.current)
         super.onSaveInstanceState(outState, outPersistentState)
     }
 
@@ -72,12 +92,12 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
     private fun selectScreen(screen : HomeScreens){
 
-        current = screen
+        StockRes.current = screen
         when(screen){
 
-            HomeScreens.FIRST -> placeFragment(FRAGMENT_TAG_FIRST)
-            HomeScreens.SECOND -> placeFragment(FRAGMENT_TAG_SECOND)
-            HomeScreens.THIRD -> placeFragment(FRAGMENT_TAG_THIRD)
+            HomeScreens.FIRST -> placeFragment(StockRes.FRAGMENT_TAG_FIRST)
+            HomeScreens.SECOND -> placeFragment(StockRes.FRAGMENT_TAG_SECOND)
+            HomeScreens.THIRD -> placeFragment(StockRes.FRAGMENT_TAG_THIRD)
         }
     }
 

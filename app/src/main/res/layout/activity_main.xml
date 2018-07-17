@@ -16,6 +16,43 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
+    <LinearLayout
+        android:id="@+id/notConnectionBlock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="Not internet connection"
+            android:textColor="@android:color/black"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/notConnectionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Try again"
+            android:textColor="@android:color/black" />
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/notConnectionProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
         android:layout_width="match_parent"

@@ -11,6 +11,7 @@ import com.example.kotlintest.api.CryptoCompare.DataC
 import com.example.kotlintest.api.CryptoCompare.HistoryData
 import com.example.kotlintest.api.CryptoCompare.SearchHistoryData
 import com.example.kotlintest.api.SearchCoinsProvider
+import com.example.kotlintest.until.CheckInternetConection
 import com.jjoe64.graphview.DefaultLabelFormatter
 import com.jjoe64.graphview.GridLabelRenderer
 import com.jjoe64.graphview.series.DataPoint
@@ -44,7 +45,7 @@ class GraphFragment : Fragment() {
 
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 val select = p0?.getItemAtPosition(p2).toString()
-                selectData(select)
+                if (CheckInternetConection(context)) selectData(select)
             }
 
 

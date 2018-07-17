@@ -9,12 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.TextView
-import com.example.kotlintest.MainActivity
 import com.example.kotlintest.R
 import com.example.kotlintest.adapter.CoinAdapter
 import com.example.kotlintest.api.CoinMarketCap.Coin
 import com.example.kotlintest.api.CoinMarketCap.SearchCoins
 import com.example.kotlintest.api.SearchCoinsProvider
+import com.example.kotlintest.until.CheckInternetConection
+import com.example.kotlintest.until.ShowNotConnectItems
+import com.example.kotlintest.until.StockRes
 import com.example.kotlintest.until.fragmentTag
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -23,10 +25,14 @@ import kotlinx.android.synthetic.main.fragment_list.*
 import java.util.*
 
 
-class ListFragment : Fragment(), View.OnClickListener {
+class ListFragment : Fragment(), View.OnClickListener, ShowNotConnectItems {
+
+    companion object {
+        val list: MutableList<Coin?> = mutableListOf()
+    }
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
-    private val getCoins: SearchCoins = SearchCoinsProvider.providerSearchCoins()
+    private lateinit var getCoins: SearchCoins
     private lateinit var adapter: CoinAdapter
     private lateinit var llm: LinearLayoutManager
 
@@ -34,11 +40,18 @@ class ListFragment : Fragment(), View.OnClickListener {
     private var isLoading: Boolean = false
 
 
+    override fun Show(load: Boolean) {}
+
+    override fun restart() {
+        loadCoin(0)
+    }
+
+
     override fun onClick(p0: View?) {
 
-        MainActivity.EXTRA_COIN_NAME = p0?.findViewById<TextView>(R.id.list_name)?.text as String
-        MainActivity.EXTRA_COIN_SYMBOL = p0.findViewById<TextView>(R.id.list_image)?.text as String
-        MainActivity.EXTRA_COIN_PRICE = p0.findViewById<TextView>(R.id.list_price)?.text.toString().toDouble()
+        StockRes.EXTRA_COIN_NAME = p0?.findViewById<TextView>(R.id.list_name)?.text as String
+        StockRes.EXTRA_COIN_SYMBOL = p0.findViewById<TextView>(R.id.list_image)?.text as String
+        StockRes.EXTRA_COIN_PRICE = p0.findViewById<TextView>(R.id.list_price)?.text.toString().toDouble()
 
 
         val transaction = activity.supportFragmentManager.beginTransaction()
@@ -81,7 +94,10 @@ class ListFragment : Fragment(), View.OnClickListener {
 
         adapter = CoinAdapter(list, this)
         listView.adapter = adapter
-        loadCoin(0)
+
+        if (CheckInternetConection(context)) loadCoin(0)
+        else ((activity) as ShowNotConnectItems).Show(false)
+
         adapter.notifyDataSetChanged()
 
 
@@ -102,6 +118,8 @@ class ListFragment : Fragment(), View.OnClickListener {
 
 
     private fun loadCoin(last: Int) {
+
+        getCoins = SearchCoinsProvider.providerSearchCoins()
         isLoading = false
         compositeDisposable.add(
                 getCoins.getCoins(last)
@@ -113,11 +131,12 @@ class ListFragment : Fragment(), View.OnClickListener {
                             list.add(null)
                             adapter.notifyDataSetChanged()
                             // adapter.addData(list as ArrayList<Coin>)
-
+                            ((activity) as ShowNotConnectItems).Show(true)
 
                             isLoading = true
                         }
                         ))
+
 
     }
 
@@ -188,7 +207,5 @@ class ListFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    companion object {
-        val list: MutableList<Coin?> = mutableListOf()
-    }
+
 }

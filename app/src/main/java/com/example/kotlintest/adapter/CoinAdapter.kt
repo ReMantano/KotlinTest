@@ -9,26 +9,18 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.kotlintest.R
 import com.example.kotlintest.api.CoinMarketCap.Coin
+import com.example.kotlintest.until.StockRes
 import kotlinx.android.synthetic.main.item_list.view.*
-import java.util.*
 
 class CoinAdapter(list: MutableList<Coin?>, clickListener: View.OnClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val TYPE_TEXT = 1
-    private val TYPE_PROGRESS = 0
     val listen = clickListener
     var data: MutableList<Coin?> = list
-
-    val colors: Array<Int> = arrayOf(Color.argb(255, 0, 255, 0), Color.argb(255, 255, 255, 0),
-            Color.argb(255, 0, 255, 255), Color.argb(255, 100, 100, 0),
-            Color.argb(255, 0, 255, 100), Color.argb(255, 10, 255, 100))
-    val rand: Random = Random()
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         var viewHolder: RecyclerView.ViewHolder
 
-        if (viewType == TYPE_TEXT) {
+        if (viewType == StockRes.TYPE_TEXT) {
             val v: View = LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_list, parent, false)
             v.setOnClickListener(listen)
@@ -62,13 +54,13 @@ class CoinAdapter(list: MutableList<Coin?>, clickListener: View.OnClickListener)
 
             var draw: Drawable = holder.imageView.background
             var wrap: Drawable = DrawableCompat.wrap(draw)
-            DrawableCompat.setTint(wrap, colors[symbol % colors.size])
+            DrawableCompat.setTint(wrap, StockRes.colors[symbol % StockRes.colors.size])
         }
     }
 
     override fun getItemCount(): Int = data.size
 
-    override fun getItemViewType(position: Int): Int = if (data.get(position) != null) TYPE_TEXT else TYPE_PROGRESS
+    override fun getItemViewType(position: Int): Int = if (data.get(position) != null) StockRes.TYPE_TEXT else StockRes.TYPE_PROGRESS
 
 
     class TextViewHolder(view: View) : RecyclerView.ViewHolder(view) {
