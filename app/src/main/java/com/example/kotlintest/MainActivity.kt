@@ -27,13 +27,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         if (load) {
             notConnectionBlock.visibility = View.INVISIBLE
             notConnectionProgressBar.visibility = View.INVISIBLE
+            conteiner_fragment.visibility = View.VISIBLE
         } else {
             notConnectionBlock.visibility = View.VISIBLE
             notConnectionProgressBar.visibility = View.INVISIBLE
+            conteiner_fragment.visibility = View.INVISIBLE
         }
     }
 
-    override fun restart() {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,12 +54,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             override fun onClick(p0: View?) {
                 notConnectionProgressBar.visibility = View.VISIBLE
                 notConnectionBlock.visibility = View.INVISIBLE
-                var th: Thread = Thread(object : Runnable {
-                    override fun run() {
-                        selectScreen(HomeScreens.FIRST)
-                    }
-                })
-                th.run()
+
+                selectScreen(StockRes.current)
+
 
             }
         })

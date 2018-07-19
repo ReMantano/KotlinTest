@@ -5,13 +5,15 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
+import android.widget.TextView
 import com.example.kotlintest.R
 import com.example.kotlintest.api.CryptoCompare.DataC
 import com.example.kotlintest.api.CryptoCompare.HistoryData
 import com.example.kotlintest.api.CryptoCompare.SearchHistoryData
 import com.example.kotlintest.api.SearchCoinsProvider
 import com.example.kotlintest.until.CheckInternetConection
+import com.example.kotlintest.until.ShowNotConnectItems
+import com.example.kotlintest.until.StockRes
 import com.jjoe64.graphview.DefaultLabelFormatter
 import com.jjoe64.graphview.GridLabelRenderer
 import com.jjoe64.graphview.series.DataPoint
@@ -38,67 +40,74 @@ class GraphFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        spinnerData.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
+        timePeriod24H.setOnClickListener(getTimeClickListener())
+        timePeriod1H.setOnClickListener(getTimeClickListener())
+        timePeriod1M.setOnClickListener(getTimeClickListener())
 
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                val select = p0?.getItemAtPosition(p2).toString()
-                if (CheckInternetConection(context)) selectData(select)
-            }
-
-
-        }
         loadDataDay()
 
     }
 
 
     private fun loadDataDay() {
-        compositeDisposable.add(
-                getHistory.getHistoryDataDay(10)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io())
-                        .subscribe({ result -> fragmentSetting(result) })
-        )
+        if (CheckInternetConection(context)) {
+            compositeDisposable.add(
+                    getHistory.getHistoryDataDay(10)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeOn(Schedulers.io())
+                            .subscribe({ result ->
+                                ((activity) as ShowNotConnectItems).Show(true)
+                                fragmentSetting(result)
+                            })
+            )
+        } else ((activity) as ShowNotConnectItems).Show(false)
     }
 
     private fun loadDataHour() {
-        compositeDisposable.add(
-                getHistory.getHistoryDataHour(10)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io())
-                        .subscribe({ result -> fragmentSetting(result) })
-        )
+        if (CheckInternetConection(context)) {
+            compositeDisposable.add(
+                    getHistory.getHistoryDataHour(10)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeOn(Schedulers.io())
+                            .subscribe({ result ->
+                                ((activity) as ShowNotConnectItems).Show(true)
+                                fragmentSetting(result)
+                            })
+            )
+        } else ((activity) as ShowNotConnectItems).Show(false)
     }
 
     private fun loadDataMinute() {
-        compositeDisposable.add(
-                getHistory.getHistoryDataMinute(10)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io())
-                        .subscribe({ result -> fragmentSetting(result) })
-        )
+        if (CheckInternetConection(context)) {
+            compositeDisposable.add(
+                    getHistory.getHistoryDataMinute(10)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeOn(Schedulers.io())
+                            .subscribe({ result ->
+                                ((activity) as ShowNotConnectItems).Show(true)
+                                fragmentSetting(result)
+                            })
+            )
+        } else ((activity) as ShowNotConnectItems).Show(false)
     }
 
 
-    private fun selectData(select: String) {
+    private fun selectData(select: Int) {
         when (select) {
 
-            "Дневной график" -> {
+            R.id.timePeriod24H -> {
 
                 loadDataDay()
 
             }
 
-            "Часовой график" -> {
+            R.id.timePeriod1H -> {
 
                 loadDataHour()
 
             }
 
-            "Минутный график" -> {
+            R.id.timePeriod1M -> {
 
                 loadDataMinute()
 
@@ -109,7 +118,7 @@ class GraphFragment : Fragment() {
     }
 
     private fun putXAxis(array: Array<DataC>): Array<DataPoint> {
-        var point: ArrayList<DataPoint> = ArrayList<DataPoint>()
+        val point: ArrayList<DataPoint> = ArrayList<DataPoint>()
         for (i in 0..array.size - 1) {
             point.add(DataPoint(i * 1.0, array.get(i).close))
 
@@ -120,26 +129,25 @@ class GraphFragment : Fragment() {
 
     private fun fragmentSetting(result: HistoryData) {
 
-        fragmentGraph.removeAllSeries()
-
         historyData = result
 
-        var data: Array<DataPoint> = putXAxis(historyData.data)
+        val data: Array<DataPoint> = putXAxis(historyData.data)
 
-        var linePoint: LineGraphSeries<DataPoint> = LineGraphSeries(data)
+        linePoint = LineGraphSeries(data)
 
-        when (spinnerData.selectedItem.toString()) {
-            "Дневной график" -> fragmentGraph.gridLabelRenderer.labelFormatter = FormatDay
-            "Часовой график" -> fragmentGraph.gridLabelRenderer.labelFormatter = FormatHour
-            "Минутный график" -> fragmentGraph.gridLabelRenderer.labelFormatter = FormatMinute
-        }
-
-        fragmentGraph.gridLabelRenderer.textSize = 16f
-        fragmentGraph.gridLabelRenderer.verticalLabelsVAlign = GridLabelRenderer.VerticalLabelsVAlign.BELOW
+        fragmentGraph.removeAllSeries()
         fragmentGraph.addSeries(linePoint)
 
+        when (StockRes.EXTRA_TIME_PERIOD_SELECT) {
+            "24H" -> fragmentGraph.gridLabelRenderer.labelFormatter = FormatDay
+            "1H" -> fragmentGraph.gridLabelRenderer.labelFormatter = FormatHour
+            "1M" -> fragmentGraph.gridLabelRenderer.labelFormatter = FormatMinute
+        }
 
-        fragmentGraph.gridLabelRenderer.numHorizontalLabels = historyData.data.size
+        fragmentGraph.gridLabelRenderer.textSize = 26f
+        fragmentGraph.gridLabelRenderer.verticalLabelsVAlign = GridLabelRenderer.VerticalLabelsVAlign.BELOW
+
+        fragmentGraph.gridLabelRenderer.numHorizontalLabels = historyData.data.size / 2
         fragmentGraph.gridLabelRenderer.numVerticalLabels = historyData.data.size
     }
 
@@ -155,7 +163,7 @@ class GraphFragment : Fragment() {
                 if (date.get(Calendar.DAY_OF_MONTH) == Calendar.getInstance().get(Calendar.DAY_OF_MONTH)) date.add(Calendar.DAY_OF_MONTH, -11)
                 date.add(Calendar.DAY_OF_MONTH, 1)
 
-                var text = ""
+                var text: String
 
                 if (date.get(Calendar.DAY_OF_MONTH) < 10) text = "0" + date.get(Calendar.DAY_OF_MONTH).toString() + "."
                 else text = date.get(Calendar.DAY_OF_MONTH).toString() + "."
@@ -220,5 +228,22 @@ class GraphFragment : Fragment() {
                 return super.formatLabel(value, isValueX)
             }
         }
+    }
+
+    private fun getTimeClickListener(): View.OnClickListener {
+        val listen = object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+                timePeriod1H.background = null
+                timePeriod24H.background = null
+                timePeriod1M.background = null
+
+                p0!!.setBackgroundResource(R.drawable.ic_sort_click)
+                StockRes.EXTRA_TIME_PERIOD_SELECT = ((p0) as TextView).text.toString()
+
+
+                if (CheckInternetConection(context)) selectData(p0.id)
+            }
+        }
+        return listen
     }
 }

@@ -1,9 +1,7 @@
 package com.example.kotlintest.fragments
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -36,10 +34,6 @@ class EmptyFragment : Fragment(), View.OnClickListener {
         imageView.text = StockRes.EXTRA_COIN_SYMBOL
         textView.text = StockRes.EXTRA_COIN_NAME
 
-        val symbol: Int = StockRes.EXTRA_COIN_NAME[0].toInt() + StockRes.EXTRA_COIN_NAME[1].toInt()
-        var draw: Drawable = imageView.background
-        var wrap: Drawable = DrawableCompat.wrap(draw)
-        DrawableCompat.setTint(wrap, StockRes.colors[symbol % StockRes.colors.size])
 
         button.setOnClickListener(this)
 

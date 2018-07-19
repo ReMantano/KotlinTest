@@ -1,17 +1,20 @@
 <resources>
     <string name="app_name">KotlinTest</string>
-    <string name="menu_title_first">First</string>
-    <string name="menu_title_second">Second</string>
-    <string name="menu_title_third">Third</string>
-    <string-array name="sortList">
-        <item>По убыванию цены</item>
-        <item>По возрастанию цены</item>
-        <item>По ежедневному росту</item>
-        <item>По ежедневному падению</item>
-    </string-array>
-    <string-array name="historyData">
-        <item>Дневной график</item>
-        <item>Часовой график</item>
-        <item>Минутный график</item>
-    </string-array>
+    ----------------MENU------------------------
+    <string name="menu_title_first">Coin</string>
+    <string name="menu_title_second">Graph</string>
+    <string name="menu_title_third">Convert</string>
+    ----------------CONVERT---------------------
+    <string name="fargment_calculate_convert">Конвертировать</string>
+    <string name="fragment_calculate_hint">Введите число</string>
+    ----------------GRAPH-----------------------
+    <string name="fargment_graph_24H">24H</string>
+    <string name="fargment_graph_1H">1H</string>
+    <string name="fargment_graph_1M">1M</string>
+    ----------------LIST------------------------
+    <string name="fargment_list_name">Название</string>
+    <string name="fargment_list_price">Цена $</string>
+    <string name="fargment_list_1H">1 ч</string>
+    <string name="fargment_list_24H">24 ч</string>
+    <string name="fargment_list_7D">7 д</string>
 </resources>

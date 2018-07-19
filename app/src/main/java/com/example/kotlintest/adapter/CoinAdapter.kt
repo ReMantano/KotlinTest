@@ -1,8 +1,6 @@
 package com.example.kotlintest.adapter
 
 import android.graphics.Color
-import android.graphics.drawable.Drawable
-import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +16,7 @@ class CoinAdapter(list: MutableList<Coin?>, clickListener: View.OnClickListener)
     var data: MutableList<Coin?> = list
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        var viewHolder: RecyclerView.ViewHolder
+        val viewHolder: RecyclerView.ViewHolder
 
         if (viewType == StockRes.TYPE_TEXT) {
             val v: View = LayoutInflater.from(parent.context)
@@ -42,19 +40,22 @@ class CoinAdapter(list: MutableList<Coin?>, clickListener: View.OnClickListener)
 
         if (holder is TextViewHolder && model != null) {
 
-            val symbol: Int = model.name[0].toInt() + model.name[1].toInt()
+            holder.name.text = model.name
+            holder.price.text = model.price.toString()
+            holder.procent_1H.text = model.percent_1h.toString()
+            holder.procent_24H.text = model.percent_24h.toString()
+            holder.procent_7D.text = model.percent_7d.toString()
+            holder.symbol.text = model.symbol
 
-            holder.nameView.text = model.name
-            holder.priceView.text = model.price.toString()
-            holder.procentView.text = model.percent_24h.toString()
-            holder.imageView.text = model.symbol
+            if (model.percent_1h < 0) holder.procent_1H.setTextColor(Color.argb(255, 255, 0, 0))
+            else holder.procent_1H.setTextColor(Color.argb(255, 0, 255, 0))
 
-            if (model.percent_24h < 0) holder.procentView.setTextColor(Color.argb(255, 255, 0, 0))
-            else holder.procentView.setTextColor(Color.argb(255, 0, 255, 0))
+            if (model.percent_24h < 0) holder.procent_24H.setTextColor(Color.argb(255, 255, 0, 0))
+            else holder.procent_24H.setTextColor(Color.argb(255, 0, 255, 0))
 
-            var draw: Drawable = holder.imageView.background
-            var wrap: Drawable = DrawableCompat.wrap(draw)
-            DrawableCompat.setTint(wrap, StockRes.colors[symbol % StockRes.colors.size])
+            if (model.percent_7d < 0) holder.procent_7D.setTextColor(Color.argb(255, 255, 0, 0))
+            else holder.procent_7D.setTextColor(Color.argb(255, 0, 255, 0))
+
         }
     }
 
@@ -65,10 +66,12 @@ class CoinAdapter(list: MutableList<Coin?>, clickListener: View.OnClickListener)
 
     class TextViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        val nameView = view.list_name!!
-        val priceView = view.list_price!!
-        val imageView = view.list_image!!
-        val procentView = view.list_procent!!
+        val name = view.item_coin_name!!
+        val price = view.item_coin_price!!
+        val symbol = view.item_coin_symbol!!
+        val procent_1H = view.item_coin_procent_1H!!
+        val procent_24H = view.item_coin_procent_24H!!
+        val procent_7D = view.item_coin_procent_7D!!
 
     }
 

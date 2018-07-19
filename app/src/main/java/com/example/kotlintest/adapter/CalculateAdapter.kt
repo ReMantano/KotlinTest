@@ -1,7 +1,5 @@
 package com.example.kotlintest.adapter
 
-import android.graphics.drawable.Drawable
-import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +16,7 @@ class CalculateAdapter : RecyclerView.Adapter<CalculateAdapter.TextViewHolder>()
     var data: MutableList<Coin?> = ListFragment.list
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CalculateAdapter.TextViewHolder {
-        var viewHolder: RecyclerView.ViewHolder
+        val viewHolder: RecyclerView.ViewHolder
         val v: View = LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_list, parent, false)
         viewHolder = TextViewHolder(v)
@@ -30,18 +28,21 @@ class CalculateAdapter : RecyclerView.Adapter<CalculateAdapter.TextViewHolder>()
     override fun onBindViewHolder(holder: CalculateAdapter.TextViewHolder, position: Int) {
 
 
-        val model: Coin = data[position]!!
-        val symbol: Int = model.name[0].toInt() + model.name[1].toInt()
-        val convert: Double = StockRes.EXTRA_COIN_PRICE * StockRes.convert_number / model.price
+        val model: Coin? = data[position]
 
-        holder.nameView.text = model.name
-        holder.priceView.text = ""
-        holder.procentView.text = convert.toString()
-        holder.imageView.text = model.symbol
+        if (model != null) {
 
-        var draw: Drawable = holder.imageView.background
-        var wrap: Drawable = DrawableCompat.wrap(draw)
-        DrawableCompat.setTint(wrap, StockRes.colors[symbol % StockRes.colors.size])
+            val convert: Double = StockRes.EXTRA_COIN_PRICE * StockRes.convert_number / model.price
+
+            holder.name_static.text = StockRes.EXTRA_COIN_NAME
+            holder.symbol_static.text = StockRes.EXTRA_COIN_SYMBOL
+            holder.price_static.text = StockRes.convert_number.toString()
+
+            holder.name.text = model.name
+            holder.symbol.text = model.symbol
+            holder.price.text = convert.toString()
+
+        }
 
     }
 
@@ -50,10 +51,12 @@ class CalculateAdapter : RecyclerView.Adapter<CalculateAdapter.TextViewHolder>()
 
     class TextViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        val nameView = view.list_name!!
-        val priceView = view.list_price!!
-        val imageView = view.list_image!!
-        val procentView = view.list_procent!!
+        val name_static = view.item_coin_name!!
+        val symbol_static = view.item_coin_symbol!!
+        val price_static = view.item_coin_price!!
+        val name = view.item_coin_procent_24H!!
+        val symbol = view.item_calculate_symbol!!
+        val price = view.item_coin_procent_7D!!
 
     }
 

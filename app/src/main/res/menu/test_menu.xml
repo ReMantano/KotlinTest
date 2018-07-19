@@ -3,18 +3,18 @@
 
     <item
         android:id="@+id/action_first"
+        android:icon="@drawable/ic_coin"
         android:title="@string/menu_title_first"
-        android:icon="@drawable/ic_first"
         />
     <item
         android:id="@+id/action_second"
+        android:icon="@drawable/ic_graph"
         android:title="@string/menu_title_second"
-        android:icon="@drawable/ic_second"
         />
     <item
         android:id="@+id/action_third"
+        android:icon="@drawable/ic_convert"
         android:title="@string/menu_title_third"
-        android:icon="@drawable/ic_third"
         />
 
 </menu>

@@ -7,8 +7,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.TextView
+import com.example.kotlintest.MainActivity
 import com.example.kotlintest.R
 import com.example.kotlintest.adapter.CoinAdapter
 import com.example.kotlintest.api.CoinMarketCap.Coin
@@ -17,15 +17,15 @@ import com.example.kotlintest.api.SearchCoinsProvider
 import com.example.kotlintest.until.CheckInternetConection
 import com.example.kotlintest.until.ShowNotConnectItems
 import com.example.kotlintest.until.StockRes
-import com.example.kotlintest.until.fragmentTag
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_list.*
 import java.util.*
 
 
-class ListFragment : Fragment(), View.OnClickListener, ShowNotConnectItems {
+class ListFragment : Fragment(), View.OnClickListener {
 
     companion object {
         val list: MutableList<Coin?> = mutableListOf()
@@ -40,33 +40,18 @@ class ListFragment : Fragment(), View.OnClickListener, ShowNotConnectItems {
     private var isLoading: Boolean = false
 
 
-    override fun Show(load: Boolean) {}
-
-    override fun restart() {
-        loadCoin(0)
-    }
-
-
     override fun onClick(p0: View?) {
 
-        StockRes.EXTRA_COIN_NAME = p0?.findViewById<TextView>(R.id.list_name)?.text as String
-        StockRes.EXTRA_COIN_SYMBOL = p0.findViewById<TextView>(R.id.list_image)?.text as String
-        StockRes.EXTRA_COIN_PRICE = p0.findViewById<TextView>(R.id.list_price)?.text.toString().toDouble()
+        StockRes.EXTRA_COIN_NAME = p0?.findViewById<TextView>(R.id.item_coin_name)?.text as String
+        StockRes.EXTRA_COIN_SYMBOL = p0.findViewById<TextView>(R.id.item_coin_symbol)?.text as String
+        StockRes.EXTRA_COIN_PRICE = p0.findViewById<TextView>(R.id.item_coin_price)?.text.toString().toDouble()
 
+        ((activity) as MainActivity).navigation.selectedItemId = R.id.action_second
 
-        val transaction = activity.supportFragmentManager.beginTransaction()
-
-        val fragment = Fragment.instantiate(context, fragmentTag<GraphFragment>(), null)
-
-        transaction.setCustomAnimations(
-                android.R.anim.fade_in, android.R.anim.fade_out,
-                android.R.anim.fade_out, android.R.anim.fade_in)
-        transaction.replace(R.id.conteiner_fragment, fragment, fragmentTag<GraphFragment>())
-        transaction.commit()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-            inflater.inflate(R.layout.fragment_list,container,false)
+            inflater.inflate(R.layout.fragment_list, container, false)
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -95,55 +80,48 @@ class ListFragment : Fragment(), View.OnClickListener, ShowNotConnectItems {
         adapter = CoinAdapter(list, this)
         listView.adapter = adapter
 
-        if (CheckInternetConection(context)) loadCoin(0)
-        else ((activity) as ShowNotConnectItems).Show(false)
+        deleteAllNullInList()
+
+        loadCoin(list.size)
 
         adapter.notifyDataSetChanged()
 
-
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-
-            }
-
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                val item = p0?.getItemAtPosition(p2).toString()
-                sortList(item)
-
-            }
-        }
+        textViewSort1H.setOnClickListener(getSortClickListener())
+        textViewSort24H.setOnClickListener(getSortClickListener())
+        textViewSort7D.setOnClickListener(getSortClickListener())
+        textViewSortName.setOnClickListener(getSortClickListener())
+        textViewSortPrice.setOnClickListener(getSortClickListener())
 
 
     }
 
 
     private fun loadCoin(last: Int) {
+        if (CheckInternetConection(context)) {
+            getCoins = SearchCoinsProvider.providerSearchCoins()
+            isLoading = false
+            compositeDisposable.add(
+                    getCoins.getCoins(last)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeOn(Schedulers.io())
+                            .subscribe({ result ->
 
-        getCoins = SearchCoinsProvider.providerSearchCoins()
-        isLoading = false
-        compositeDisposable.add(
-                getCoins.getCoins(last)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io())
-                        .subscribe({ result ->
+                                list.addAll(result)
+                                list.add(null)
+                                adapter.notifyDataSetChanged()
 
-                            list.addAll(result)
-                            list.add(null)
-                            adapter.notifyDataSetChanged()
-                            // adapter.addData(list as ArrayList<Coin>)
-                            ((activity) as ShowNotConnectItems).Show(true)
+                                ((activity) as ShowNotConnectItems).Show(true)
 
-                            isLoading = true
-                        }
-                        ))
-
-
+                                isLoading = true
+                            }
+                            ))
+        } else ((activity) as ShowNotConnectItems).Show(false)
     }
 
-    private fun sortList(sort: String) {
+    private fun sortList(sort: Int) {
         when (sort) {
 
-            "По убыванию цены" -> {
+            R.id.textViewSortPrice -> {
 
                 Collections.sort(list, object : Comparator<Coin?> {
                     override fun compare(p0: Coin?, p1: Coin?): Int {
@@ -158,7 +136,7 @@ class ListFragment : Fragment(), View.OnClickListener, ShowNotConnectItems {
                 adapter.notifyDataSetChanged()
             }
 
-            "По возрастанию цены" -> {
+            R.id.textViewSort1H -> {
 
                 Collections.sort(list, object : Comparator<Coin?> {
                     override fun compare(p0: Coin?, p1: Coin?): Int {
@@ -174,7 +152,7 @@ class ListFragment : Fragment(), View.OnClickListener, ShowNotConnectItems {
 
             }
 
-            "По ежедневному росту" -> {
+            R.id.textViewSort24H -> {
 
                 Collections.sort(list, object : Comparator<Coin?> {
                     override fun compare(p0: Coin?, p1: Coin?): Int {
@@ -189,7 +167,7 @@ class ListFragment : Fragment(), View.OnClickListener, ShowNotConnectItems {
                 adapter.notifyDataSetChanged()
             }
 
-            "По ежедневному падению" -> {
+            R.id.textViewSort7D -> {
 
                 Collections.sort(list, object : Comparator<Coin?> {
                     override fun compare(p0: Coin?, p1: Coin?): Int {
@@ -207,5 +185,28 @@ class ListFragment : Fragment(), View.OnClickListener, ShowNotConnectItems {
         }
     }
 
+    private fun deleteAllNullInList() {
+        for (i in 0..(list.size - 1)) {
+            if (list.get(i) == null) list.removeAt(i)
+        }
+    }
 
+    private fun getSortClickListener(): View.OnClickListener {
+        val click = object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+
+                textViewSort1H.background = null
+                textViewSort24H.background = null
+                textViewSort7D.background = null
+                textViewSortPrice.background = null
+                textViewSortName.background = null
+
+                val item = p0!!.id
+                p0.setBackgroundResource(R.drawable.ic_sort_click)
+
+                sortList(item)
+            }
+        }
+        return click
+    }
 }
